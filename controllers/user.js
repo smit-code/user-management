@@ -14,7 +14,15 @@ exports.postUser = async (req, res) => {
       imageUrl: imageUrl,
     });
 
-    const savedUser = await user.save(user);
+    const savedUser = await user
+      .save(user)
+      .then((result) => {
+        console.log("User saved successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     // res.json(savedUser);
     res.redirect("/");
   } catch (err) {
@@ -31,55 +39,98 @@ exports.postUser = async (req, res) => {
 //   }
 // };
 
-// exports.getUsers = (req, res, next) => {
-//   User.find()
-//     .then((users) => {
-//       console.log(users);
-//       res.render("home", {
-//         user: users,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+exports.getUsers = (req, res, next) => {
+  User.find()
+    .then((users) => {
+      // console.log(users);
+      res.render("home", {
+        users: users,
+        pageTitle: "ALL USER PAGE",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 exports.getUser = async (req, res) => {
   try {
     const id = req.params.id;
 
     const user = await User.findOne({ id });
-    res.send(user);
+    // res.send(user);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
+exports.getPutUser = async (req, res) => {
+  const userId = req.params.userId;
+  // console.log(userId);
+
+  try {
+    User.findById(userId).then((user) => {
+      if (!user) {
+        return res.redirect("/");
+      }
+      // console.log(user);
+      res.render("edit-user", {
+        pageTitle: "Edit User",
+        path: "/edituser",
+        user: user,
+      });
+    });
+    // res.send(updatedUser);
   } catch (err) {
     res.status(500).send(err);
   }
 };
 
 exports.putUser = async (req, res) => {
+  const userId = req.body.userId;
+  // console.log(userId);
+  const updatedName = req.body.name;
+  const updatedEmail = req.body.email;
+  const updatedNumber = req.body.number;
+  const updatedImageUrl = req.body.imageUrl;
+  // console.log(updatedName, updatedEmail, updatedNumber, updatedImageUrl);
+
+  User.findById(userId)
+    .then((user) => {
+      user.name = updatedName;
+      user.email = updatedEmail;
+      user.number = updatedNumber;
+      user.imageUrl = updatedImageUrl;
+
+      return user.save().then((result) => {
+        console.log("User Updated Successfully");
+        res.redirect("/");
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+exports.deleteUser = async (req, res) => {
   try {
-    const id = req.params.id;
-    const updatedName = req.body.name;
-    const updatedEmail = req.body.email;
-    const updatedNumber = req.body.number;
-    const updatedImageUrl = req.body.imageUrl;
-    const user = await User.findOne({ id });
-    user.name = updatedName;
-    user.email = updatedEmail;
-    user.number = updatedNumber;
-    user.imageUrl = updatedImageUrl;
-    const updatedUser = await user.save();
-    res.send(updatedUser);
+    const id = req.params.userId;
+    const deletedUser = await User.findByIdAndRemove(id)
+      .then((user) => {
+        console.log("User deleted successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    res.redirect("/");
   } catch (err) {
     res.status(500).send(err);
   }
 };
 
-exports.deleteUser = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const deletedUser = await User.findByIdAndRemove(id);
-    res.send("User deleted successfully");
-  } catch (err) {
-    res.status(500).send(err);
-  }
+exports.getAddUser = (req, res) => {
+  res.render("add-user", {
+    pageTitle: "ADD USER",
+    path: "/adduser",
+  });
 };

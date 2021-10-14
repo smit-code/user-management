@@ -1,16 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
+
+<%- include("./includes/header.ejs") %>
+
   <body>
+    <%- include("./includes/navbar.ejs") %>
+    <!-- CARD OVER START -->
+    <% if (users.length > 0) { %>
     <div>
-      <h2><%= user.name %></h2>
-      <h5><%= user.email %></h5>
-      <p><%= user.number %></p>
+      <div >
+        <div >
+          <div style="justify-content: center"class="row mx-md-n5 ">
+          <% for (let user of users) { %>
+            
+            <div>
+
+            
+              <div class="card-wrapper col-md-3">
+                <div class="card m-2" >
+                  <div class="card-image">
+                    <img
+                    style="height: 28rem; width: 22rem"
+                src="<%= user.imageUrl %>"
+                alt="<%= user.name %>"
+                />
+              </div>
+              
+              <ul class="social-icons">
+                <li>
+                  <a href="">
+                    <i class="fab fa-facebook-f"></i>
+                  </a>
+                </li>
+                <li>
+                  <a href="">
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                </li>
+                <li>
+                  <a href="">
+                    <i class="fab fa-twitter"></i>
+                  </a>
+                </li>
+              </ul>
+              
+              <div class="details">
+                <h2>
+                  <%= user.name %>
+                  <br />
+                  <span class="job-title"
+                  >+91 <%= user.number %> || <%= user.email %>
+                </span>
+              </h2>
+        
+            </div>
+            
+          </div>
+          
+        </div>
+
+        <div class="d-flex justify-content-start ">
+          <div class="mr-3">
+            <a href="/edit-user/<%= user.id %>" class="btn btn-primary">Edit</a>
+            <input type="hidden" value="<%= user.id %>" name="userId" /> 
+          </div>
+
+          <div>
+            <form action="/delete-user/<%= user.id %>" method="POST">
+              <input class="btn btn-danger" type="submit" value="Delete"  name="Delete"/>
+            </form>
+          </div>
+
+        </div>
+           
+        
+        </div>
+    
+        <!-- END box wrapper -->
+        <% } %>
+      </div>
     </div>
+      </div>
+    </div>
+    <% } else { %>
+    <h1><center>No User Found !!!</center></h1>
+    <% } %>
+    <!-- END container -->
+
+    <script
+      src="https://kit.fontawesome.com/0e61ca05ae.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
